@@ -1,56 +1,15 @@
-const express = require('express'); 
-const userRouter = express();
-const model = require('./model');
+const express = require ('express');
+const {bcrypt} = require ('bcrypt');
+const router = express.Router();
 
-userRouter.get('/get-user',async(res,req)=>{
-try{
-    const {mail , userName , password} = req.body
-    const userFind = await model.findOne();
-    const userOne = userFind.map((model)=>{
-        return{
-            userName:model.userName,
-            mail:model.mail,
-            password:model.password,
-        }
-    })
-    res.status(200).json({model:model});
-    
-
-    
-}
-catch(err){
-    res.status(500).json({message:'Internal Server Error'});
-}
-})
-userRouter.post('/login',async(res,req)=>{
-    try{
-        const{mail,userName,password} = req.body;
-const userFindOne = await model.findOne({mail});
-if(!user){
-res.send(404).json({message:'User not found'})
-}    
-if(!userName || !mail || !password){
-    res.status(400).json({message:'fill out all fields'})
-}
-bcrypt.compare(password, check.password, function (err, result) {
-    if (err) {
-        return res.status(400).json({ message: "Invalid bcrypt compare" });
+router.post('/signup',async(req,res)=>{
+    const {email,password,name} = req.body
+    const useremail = await user.findOne{email:email};
+    if (usermail){
+        return res(200).json({message:"user already exist"});
     }
-    if (result) {
-        jwt.sign({ mail: mail }, secret, (err, token) => {
-            if (err) {
-                return res.status(400).json({ message: "Invalid jwt" });
-            }
-            res.setHeader('Authorization', `Bearer ${token}`);
-            console.log(token);
-            res.status(200).json({ token: token });
-        });
-    }
-}
-    )
-}catch(err){
-res.status(500).json({message:'Internal Server Error'});
-}
-
+    const salt = await bcrypt.gensalt(10);
+    const pass = await bcrypt.hash(password,salt);
+    const user =({email:email,password: password,name: name});
+     users.create(user);
 })
-module.export = {userRouter};
